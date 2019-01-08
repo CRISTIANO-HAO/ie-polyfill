@@ -1,12 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import _ from 'lodash';
+import './css/style.css';
+import Icon from './image/logo.svg';
+import Data from './xml/data.xml';
+import printMe from './js/print.js';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+function component() {
+  let element = document.createElement('div');
+  var btn = document.createElement('button');
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: http://bit.ly/CRA-PWA
-serviceWorker.unregister();
+  // Lodash, currently included via a script, is required for this line to work
+  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
+  element.classList.add('hello');
+
+  var myIcon = new Image();
+  myIcon.src = Icon;
+
+  btn.innerHTML = 'Click me and check the console!';
+  btn.onclick = printMe;
+
+  element.appendChild(btn);
+  element.appendChild(myIcon);
+
+  console.log(Data);
+
+  return element;
+}
+
+document.body.appendChild(component());
