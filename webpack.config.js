@@ -4,28 +4,71 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/index.js',
+  entry: './src/entry.js',
   output: {
-    filename: 'main.js',
+    filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: './dist'
+    contentBase: path.resolve(__dirname, 'dist'),
+    port: 3333
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Output Management'
+      title: 'Output Management',
+      template: './src/index.html'
     })
   ],
+  resolve: {
+    alias: {
+      Assets: path.resolve(__dirname, 'src/assets'),
+      Pages: path.resolve(__dirname, 'src/pages')
+    }
+  },
   module: {
-    rules: [
+    rules: [{
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'src')
+        ],
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            babelrc: false,
+            presets: [
+              'stage-1', 'react', 'es2015'
+              // ['@babel/preset-env', {
+              //   targets: {
+              //     // browers: ['> 1%', 'last 2 versions', 'not dead'],
+              //     ie: 11,
+              //     useBuiltIns: 'entry'
+              //   }
+              // }]
+            ],
+            plugins: []
+          }
+        }]
+      },
       {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
+        test: /\.(css|less)$/,
+        use: [{
+            loader: "style-loader"
+          },
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              modules: true,
+              localIdentName: "[local]"
+            }
+          },
+          {
+            loader: "less-loader"
+          }
         ]
       },
       {
@@ -47,5 +90,10 @@ module.exports = {
         ]
       }
     ]
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   }
 };
